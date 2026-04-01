@@ -1,5 +1,5 @@
-// Arreglo temporal para almacenar los autobuses en memoria
-let buses = [];
+// 1. Inicializar leyendo de LocalStorage (si existe) o crear arreglo vacío
+let buses = JSON.parse(localStorage.getItem('busesBdd')) || [];
 
 // Referencias a los elementos del DOM
 const form = document.getElementById('busForm');
@@ -8,38 +8,37 @@ const placaInput = document.getElementById('placa');
 const marcaInput = document.getElementById('marca');
 const capacidadInput = document.getElementById('capacidad');
 
+// 2. Renderizar la tabla automáticamente al cargar la página
+document.addEventListener('DOMContentLoaded', renderTable);
+
 // ---------------------------
-// 1. Lógica de CREAR (Create)
+// Lógica de CREAR (Create)
 // ---------------------------
 form.addEventListener('submit', function(event) {
-    event.preventDefault(); // Evita que la página se recargue al enviar el formulario
+    event.preventDefault(); 
     
-    // Crear el objeto con los datos del formulario
     const nuevoAutobus = {
-        id: Date.now().toString(), // Generamos un ID único temporal
+        id: Date.now().toString(), 
         placa: placaInput.value.trim(),
         marca: marcaInput.value.trim(),
         capacidad: capacidadInput.value
     };
 
-    // Agregar al arreglo principal
     buses.push(nuevoAutobus);
     
-    // Limpiar el formulario
-    form.reset();
+    // 3. Guardar en LocalStorage después de agregar
+    guardarEnLocalStorage();
     
-    // Actualizar la tabla visualmente
+    form.reset();
     renderTable();
 });
 
 // ---------------------------
-// 2. Lógica de LEER (Read)
+// Lógica de LEER (Read)
 // ---------------------------
 function renderTable() {
-    // Limpiar el contenido actual de la tabla
     tableBody.innerHTML = '';
     
-    // Recorrer el arreglo y crear una fila por cada autobús
     buses.forEach(bus => {
         const row = document.createElement('tr');
         
@@ -48,11 +47,19 @@ function renderTable() {
             <td>${bus.marca}</td>
             <td>${bus.capacidad}</td>
             <td>
-                <button class="btn-edit" type="button" onclick="alert('Función de editar próximamente')">Editar</button>
-                <button class="btn-delete" type="button" onclick="alert('Función de eliminar próximamente')">Eliminar</button>
+                <button class="btn-edit" type="button" onclick="alert('Función de editar pendiente')">Editar</button>
+                <button class="btn-delete" type="button" onclick="alert('Función de eliminar pendiente')">Eliminar</button>
             </td>
         `;
         
         tableBody.appendChild(row);
     });
+}
+
+// ---------------------------
+// Función Helper para Persistencia
+// ---------------------------
+function guardarEnLocalStorage() {
+    // Convertimos el arreglo a string (JSON) para poder guardarlo
+    localStorage.setItem('busesBdd', JSON.stringify(buses));
 }
